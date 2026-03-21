@@ -1,17 +1,17 @@
-import User from "../models/user.model.js";
+import { googleAuthService } from "../services/auth.service.js";
 
-export const googleAuth = async (req, res) => {
+export const googleAuthController = async (req, res, next) => {
     try {
         const { name, email, avatar, googleId } = req.body;
 
-        let user = await User.findOne({ googleId });
-
-        if (!user) {
-            user = await User.create({ name, email, avatar, googleId });
+        if (!name || !email || !googleId || !avatar) {
+            return res.status(400).json({ success: false, message: "All fields are required" });
         }
 
-        res.status(200).json({ success: true, user });
+        const { user, token } = await googleAuthService(name, email, avatar, googleId);
+
+        res.status(200).json({ success: true, user, token });
     } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        next(error);
     }
 };
