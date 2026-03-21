@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import logger from './logger.config.js';
 import { DB_URL } from './init.config.js';
 
 const connectDB = async () => {
@@ -8,9 +9,9 @@ const connectDB = async () => {
             tls: true,
             tlsAllowInvalidCertificates: false,
         });
-        console.log('MongoDB connected');
+        logger.success("MongoDB connected");
     } catch (error) {
-        console.error('MongoDB connection failed:', error.message);
+        logger.error('MongoDB connection failed:', error.message);
         process.exit(1);
     }
 };

@@ -1,8 +1,9 @@
-import express from "express";
-import { googleAuth } from "../controllers/auth.controller.js";
+import { Router } from "express";
+import { googleAuthController } from "../controllers/auth.controller.js";
+import reqBodyMiddleware from "../middlewares/reqBody.middleware.js";
 
-const router = express.Router();
+const router = Router();
 
-router.post("/google", googleAuth);
+router.post("/google", reqBodyMiddleware, googleAuthController);
 
 export default router;

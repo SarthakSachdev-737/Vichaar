@@ -18,6 +18,15 @@ const userSchema = new mongoose.Schema({
         required: true,
         unique: true,
     },
+    isActive: {
+        type: Boolean,
+        default: true,
+    },
+    role: {
+        type: String,
+        enum: ["student", "admin"],
+        default: "student",
+    },
 }, { timestamps: true });
 
 export default mongoose.model('User', userSchema);

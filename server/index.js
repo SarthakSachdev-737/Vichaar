@@ -2,8 +2,8 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import connectDB from "./config/db.config.js";
-import authRoutes from "./routes/auth.routes.js";
-
+import routes from "./routes/api.routes.js";
+import logger from "./config/logger.config.js";
 dotenv.config();
 connectDB();
 
@@ -14,9 +14,10 @@ app.use(cors({
     credentials: true,
 }));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-app.use("/api/auth", authRoutes);
+app.use("/api/", routes);
 
 app.listen(process.env.PORT, () => {
-    console.log(`Server running on port ${process.env.PORT}`);
+    logger.success(`Server running on port ${process.env.PORT}`);
 });
