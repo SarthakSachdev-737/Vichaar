@@ -1,26 +1,58 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Paper Backgrounds */
+  --color-parchment: #f5f0e8;
+  --color-cream: #fdf8f0;
+  --color-oldpaper: #e8dfc8;
+  --color-warmwhite: #fefcf7;
+
+  /* Ink Text */
+  --color-inkdeep: #1a1410;
+  --color-inkbrown: #3d2b1f;
+  --color-inkfaded: #7a6a5a;
+
+  /* Accents */
+  --color-scholarred: #c0392b;
+  --color-vintageteal: #2e7d72;
+  --color-agedgold: #c9a84c;
+  --color-softrust: #b85c38;
+
+  /* Borders & Lines */
+  --color-ruleline: #d4c9b0;
+  --color-marginline: #c8b89a;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  /* Paper Backgrounds */
+  --color-parchment: var(--color-parchment);
+  --color-cream: var(--color-cream);
+  --color-oldpaper: var(--color-oldpaper);
+  --color-warmwhite: var(--color-warmwhite);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* Ink Text */
+  --color-inkdeep: var(--color-inkdeep);
+  --color-inkbrown: var(--color-inkbrown);
+  --color-inkfaded: var(--color-inkfaded);
+
+  /* Accents */
+  --color-scholarred: var(--color-scholarred);
+  --color-vintageteal: var(--color-vintageteal);
+  --color-agedgold: var(--color-agedgold);
+  --color-softrust: var(--color-softrust);
+
+  /* Borders */
+  --color-ruleline: var(--color-ruleline);
+  --color-marginline: var(--color-marginline);
+
+  /* Fonts */
+  --font-playfair: "Playfair Display", serif;
+  --font-lora: "Lora", serif;
+  --font-courier: "Courier Prime", monospace;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-parchment);
+  color: var(--color-inkdeep);
+  font-family: var(--font-lora), Arial, sans-serif;
 }
