@@ -1,0 +1,68 @@
+"use client";
+
+export default function SubjectCard({ subject, isSelected, onClick }) {
+  return (
+    <button
+      onClick={() => onClick(subject)}
+      className="w-full text-left px-4 py-3 rounded-sm transition-all duration-150 group"
+      style={{
+        background: isSelected ? "var(--color-inkdeep)" : "transparent",
+        border: isSelected
+          ? "1px solid var(--color-inkbrown)"
+          : "1px solid transparent",
+        boxShadow: isSelected ? "2px 2px 0px var(--color-inkbrown)" : "none",
+      }}
+      onMouseEnter={(e) => {
+        if (!isSelected) {
+          e.currentTarget.style.background = "rgba(212, 201, 176, 0.4)";
+          e.currentTarget.style.border = "1px solid var(--color-ruleline)";
+        }
+      }}
+      onMouseLeave={(e) => {
+        if (!isSelected) {
+          e.currentTarget.style.background = "transparent";
+          e.currentTarget.style.border = "1px solid transparent";
+        }
+      }}
+    >
+      <div className="flex items-center gap-3">
+        {/* Icon */}
+        <span className="text-xl flex-shrink-0">{subject.icon}</span>
+
+        {/* Text */}
+        <div className="flex-1 min-w-0">
+          <p
+            className="text-sm font-medium truncate"
+            style={{
+              fontFamily: "var(--font-lora)",
+              color: isSelected
+                ? "var(--color-cream)"
+                : "var(--color-inkbrown)",
+            }}
+          >
+            {subject.name}
+          </p>
+          <p
+            className="text-xs truncate mt-0.5"
+            style={{
+              fontFamily: "var(--font-courier)",
+              color: isSelected
+                ? "var(--color-ruleline)"
+                : "var(--color-inkfaded)",
+            }}
+          >
+            {subject.description}
+          </p>
+        </div>
+
+        {/* Selected indicator */}
+        {isSelected && (
+          <div
+            className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+            style={{ background: "var(--color-agedgold)" }}
+          />
+        )}
+      </div>
+    </button>
+  );
+}
