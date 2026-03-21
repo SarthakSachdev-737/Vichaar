@@ -1,30 +1,65 @@
 "use client";
 import { useAuth } from "@/context/AuthContext";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import PageBackground from "@/components/shared/PageBackground";
+import LoginCard from "@/components/shared/LoginCard";
+import SubjectTags from "@/components/shared/SubjectTags";
+import LoadingSpinner from "@/components/shared/LoadingSpinner";
 
 export default function LoginPage() {
   const { loginWithGoogle, isAuthenticated, loading } = useAuth();
   const router = useRouter();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (isAuthenticated) router.push("/dashboard");
-  }, [isAuthenticated]);
+  }, [isAuthenticated, router]);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) {
+    return (
+      <PageBackground className="flex items-center justify-center">
+        <LoadingSpinner message="Opening your notebook..." />
+      </PageBackground>
+    );
+  }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-950">
-      <div className="bg-gray-900 p-10 rounded-2xl flex flex-col items-center gap-6">
-        <h1 className="text-white text-3xl font-bold">aiLearner</h1>
-        <p className="text-gray-400">Login to start learning</p>
-        <button
-          onClick={loginWithGoogle}
-          className="flex items-center gap-3 bg-white text-black px-6 py-3 rounded-xl font-medium hover:bg-gray-100 transition"
+    <PageBackground className="flex flex-col items-center justify-center">
+      {/* Corner stamp */}
+      <div
+        className="absolute top-8 right-8 w-16 h-16 border-2 border-agedgold rounded-full flex items-center justify-center pointer-events-none"
+        style={{
+          opacity: mounted ? 0.4 : 0,
+          transition: "opacity 1s ease 0.5s",
+        }}
+      >
+        <span
+          className="text-agedgold text-xs text-center leading-tight"
+          style={{ fontFamily: "var(--font-playfair)" }}
         >
-          Continue with Google
-        </button>
+          EST
+          <br />
+          2025
+        </span>
       </div>
-    </div>
+
+      {/* Login card */}
+      <LoginCard onLogin={loginWithGoogle} mounted={mounted} />
+
+      {/* Subject tags */}
+      <div
+        style={{
+          opacity: mounted ? 1 : 0,
+          transition: "opacity 0.7s ease 0.4s",
+        }}
+      >
+        <SubjectTags />
+      </div>
+    </PageBackground>
   );
 }

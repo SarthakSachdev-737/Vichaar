@@ -11,12 +11,25 @@ export const AuthProvider = ({ children }) => {
   const isAuthenticated = status === "authenticated";
   const user = session?.user || null;
 
+  // Derive mongoUser from the JWT — session.user.id IS the MongoDB _id
+  // No extra API call needed
+  const mongoUser = user
+    ? { _id: user.id, role: user.role, name: user.name, email: user.email }
+    : null;
+
   const loginWithGoogle = () => signIn("google", { callbackUrl: "/dashboard" });
   const logout = () => signOut({ callbackUrl: "/login" });
 
   return (
     <AuthContext.Provider
-      value={{ user, loading, isAuthenticated, loginWithGoogle, logout }}
+      value={{
+        user,
+        mongoUser,
+        loading,
+        isAuthenticated,
+        loginWithGoogle,
+        logout,
+      }}
     >
       {children}
     </AuthContext.Provider>
