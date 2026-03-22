@@ -5,14 +5,15 @@ const SessionContext = createContext();
 
 export const SessionProvider = ({ children }) => {
   const [dashboardState, setDashboardState] = useState("idle");
-  const [isTyping, setIsTyping] = useState(false);
   const [selectedSubject, setSelectedSubject] = useState(null);
   const [currentSession, setCurrentSession] = useState(null);
   const [messages, setMessages] = useState([]);
   const [progress, setProgress] = useState(null);
   const [numQuestions, setNumQuestions] = useState(6);
   const [loading, setLoading] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
   const [evaluation, setEvaluation] = useState(null);
+  const [isSessionComplete, setIsSessionComplete] = useState(false);
 
   const selectSubject = (subject) => {
     setSelectedSubject(subject);
@@ -20,6 +21,7 @@ export const SessionProvider = ({ children }) => {
     setMessages([]);
     setCurrentSession(null);
     setProgress(null);
+    setIsSessionComplete(false);
   };
 
   const startSession = (session, firstQuestion, progressInfo) => {
@@ -27,11 +29,11 @@ export const SessionProvider = ({ children }) => {
     setProgress(progressInfo);
     setMessages([{ role: "ai", content: firstQuestion.question }]);
     setDashboardState("started");
+    setIsSessionComplete(false);
   };
 
   const addMessage = (message) => {
     if (message._replace) {
-      // Replace last user message with evaluated version
       const { _replace, ...cleanMessage } = message;
       setMessages((prev) => {
         const updated = [...prev];
@@ -52,6 +54,10 @@ export const SessionProvider = ({ children }) => {
     setProgress(progressInfo);
   };
 
+  const completeSession = () => {
+    setIsSessionComplete(true);
+  };
+
   const resetDashboard = () => {
     setDashboardState("idle");
     setSelectedSubject(null);
@@ -60,8 +66,9 @@ export const SessionProvider = ({ children }) => {
     setProgress(null);
     setNumQuestions(6);
     setLoading(false);
-    setEvaluation(null);
     setIsTyping(false);
+    setEvaluation(null);
+    setIsSessionComplete(false);
   };
 
   return (
@@ -74,17 +81,19 @@ export const SessionProvider = ({ children }) => {
         progress,
         numQuestions,
         loading,
+        isTyping,
         evaluation,
+        isSessionComplete,
         setLoading,
         setNumQuestions,
+        setIsTyping,
         setEvaluation,
         selectSubject,
         startSession,
         addMessage,
         updateProgress,
+        completeSession,
         resetDashboard,
-        isTyping,
-        setIsTyping,
       }}
     >
       {children}

@@ -1,9 +1,14 @@
 "use client";
 
-export default function SubjectCard({ subject, isSelected, onClick }) {
+export default function SubjectCard({
+  subject,
+  isSelected,
+  onClick,
+  isDisabled,
+}) {
   return (
     <button
-      onClick={() => onClick(subject)}
+      onClick={() => !isDisabled && onClick(subject)}
       className="w-full text-left px-4 py-3 rounded-sm transition-all duration-150 group"
       style={{
         background: isSelected ? "var(--color-inkdeep)" : "transparent",
@@ -11,15 +16,17 @@ export default function SubjectCard({ subject, isSelected, onClick }) {
           ? "1px solid var(--color-inkbrown)"
           : "1px solid transparent",
         boxShadow: isSelected ? "2px 2px 0px var(--color-inkbrown)" : "none",
+        opacity: isDisabled ? 0.4 : 1,
+        cursor: isDisabled ? "not-allowed" : "pointer",
       }}
       onMouseEnter={(e) => {
-        if (!isSelected) {
+        if (!isSelected && !isDisabled) {
           e.currentTarget.style.background = "rgba(212, 201, 176, 0.4)";
           e.currentTarget.style.border = "1px solid var(--color-ruleline)";
         }
       }}
       onMouseLeave={(e) => {
-        if (!isSelected) {
+        if (!isSelected && !isDisabled) {
           e.currentTarget.style.background = "transparent";
           e.currentTarget.style.border = "1px solid transparent";
         }

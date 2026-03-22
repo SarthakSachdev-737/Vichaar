@@ -2,12 +2,10 @@
 import { useState } from "react";
 import { useStudySession } from "@/context/SessionContext";
 import { sendChatMessage } from "@/utils/axios";
-import { useRouter } from "next/navigation";
 
 export default function ChatInput() {
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
-  const router = useRouter();
 
   const {
     currentSession,
@@ -16,17 +14,20 @@ export default function ChatInput() {
     setLoading,
     setEvaluation,
     setIsTyping,
+    completeSession,
+    isSessionComplete,
   } = useStudySession();
 
   const handleSend = async () => {
-    if (!input.trim() || sending || !currentSession) return;
+    if (!input.trim() || sending || !currentSession || isSessionComplete)
+      return;
 
     const userContent = input.trim();
     setInput("");
     setSending(true);
     setIsTyping(true);
 
-    // Optimistically add user message without evaluation yet
+    // Optimistically add user message
     addMessage({ role: "user", content: userContent });
 
     try {
@@ -37,13 +38,13 @@ export default function ChatInput() {
 
       const { evaluation, nextQuestion, done, progress, report } = res.data;
 
-      // Update progress bar
       if (progress) updateProgress(progress);
 
-      // Hide typing indicator before showing response
+      // Hide typing indicator
       setIsTyping(false);
 
       if (done) {
+        // Attach evaluation to last user message
         addMessage({
           role: "user",
           content: userContent,
@@ -51,17 +52,13 @@ export default function ChatInput() {
           _replace: true,
         });
 
-        addMessage({
-          role: "ai",
-          content:
-            "Your Vichaar session is complete. Preparing your analysis...",
-        });
-
+        // Store report in context
         if (setEvaluation) setEvaluation(report);
-        setTimeout(() => {
-          router.push(`/analysis/${currentSession._id}`);
-        }, 1500);
+
+        // Mark session as complete — shows SessionCompleteCard
+        completeSession();
       } else {
+        // Attach evaluation to last user message
         addMessage({
           role: "user",
           content: userContent,
@@ -69,6 +66,7 @@ export default function ChatInput() {
           _replace: true,
         });
 
+        // Add next question as clean AI bubble
         addMessage({
           role: "ai",
           content: nextQuestion?.question ?? "",
@@ -76,7 +74,7 @@ export default function ChatInput() {
       }
     } catch (err) {
       console.error("Failed to send message:", err);
-      setIsTyping(false); // hide on error too
+      setIsTyping(false);
       addMessage({
         role: "ai",
         content: "Something went wrong. Please try again.",
@@ -108,38 +106,50 @@ export default function ChatInput() {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Write your answer here... (Enter to send)"
+          placeholder={
+            isSessionComplete
+              ? "Session complete — view your analysis above"
+              : "Write your answer here... (Enter to send)"
+          }
           rows={3}
-          disabled={sending}
+          disabled={sending || isSessionComplete}
           className="flex-1 resize-none outline-none px-4 py-3 rounded-sm text-sm leading-relaxed"
           style={{
             fontFamily: "var(--font-lora)",
-            color: "var(--color-inkdeep)",
+            color: isSessionComplete
+              ? "var(--color-inkfaded)"
+              : "var(--color-inkdeep)",
             border: "1px solid var(--color-ruleline)",
-            background: "var(--color-warmwhite)",
+            background: isSessionComplete
+              ? "rgba(212,201,176,0.2)"
+              : "var(--color-warmwhite)",
             boxShadow: "inset 2px 2px 4px rgba(212,201,176,0.3)",
+            cursor: isSessionComplete ? "not-allowed" : "text",
           }}
         />
 
         {/* Send button */}
         <button
           onClick={handleSend}
-          disabled={sending || !input.trim()}
-          className="shrink-0 w-12 h-12 rounded-sm flex items-center justify-center transition-all duration-150"
+          disabled={sending || !input.trim() || isSessionComplete}
+          className="flex-shrink-0 w-12 h-12 rounded-sm flex items-center justify-center transition-all duration-150"
           style={{
             background:
-              sending || !input.trim()
+              sending || !input.trim() || isSessionComplete
                 ? "var(--color-ruleline)"
                 : "var(--color-inkdeep)",
             border: "1px solid var(--color-inkbrown)",
             boxShadow:
-              sending || !input.trim()
+              sending || !input.trim() || isSessionComplete
                 ? "none"
                 : "2px 2px 0px var(--color-inkbrown)",
-            cursor: sending || !input.trim() ? "not-allowed" : "pointer",
+            cursor:
+              sending || !input.trim() || isSessionComplete
+                ? "not-allowed"
+                : "pointer",
           }}
           onMouseEnter={(e) => {
-            if (!sending && input.trim()) {
+            if (!sending && input.trim() && !isSessionComplete) {
               e.currentTarget.style.transform = "translate(-1px, -1px)";
               e.currentTarget.style.boxShadow =
                 "3px 3px 0px var(--color-inkbrown)";
@@ -172,7 +182,9 @@ export default function ChatInput() {
         className="text-xs mt-2 text-inkfaded max-w-3xl mx-auto"
         style={{ fontFamily: "var(--font-courier)" }}
       >
-        Shift + Enter for new line · Enter to send
+        {isSessionComplete
+          ? "Session ended — scroll up to review your answers"
+          : "Shift + Enter for new line · Enter to send"}
       </p>
     </div>
   );
