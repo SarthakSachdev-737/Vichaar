@@ -4,16 +4,15 @@ import { createContext, useContext, useState } from "react";
 const SessionContext = createContext();
 
 export const SessionProvider = ({ children }) => {
-  // 3 states: idle | selected | started
   const [dashboardState, setDashboardState] = useState("idle");
-
+  const [isTyping, setIsTyping] = useState(false);
   const [selectedSubject, setSelectedSubject] = useState(null);
   const [currentSession, setCurrentSession] = useState(null);
-  const [evaluation, setEvaluation] = useState(null);
   const [messages, setMessages] = useState([]);
   const [progress, setProgress] = useState(null);
   const [numQuestions, setNumQuestions] = useState(6);
   const [loading, setLoading] = useState(false);
+  const [evaluation, setEvaluation] = useState(null);
 
   const selectSubject = (subject) => {
     setSelectedSubject(subject);
@@ -31,7 +30,22 @@ export const SessionProvider = ({ children }) => {
   };
 
   const addMessage = (message) => {
-    setMessages((prev) => [...prev, message]);
+    if (message._replace) {
+      // Replace last user message with evaluated version
+      const { _replace, ...cleanMessage } = message;
+      setMessages((prev) => {
+        const updated = [...prev];
+        for (let i = updated.length - 1; i >= 0; i--) {
+          if (updated[i].role === "user") {
+            updated[i] = cleanMessage;
+            break;
+          }
+        }
+        return updated;
+      });
+    } else {
+      setMessages((prev) => [...prev, message]);
+    }
   };
 
   const updateProgress = (progressInfo) => {
@@ -42,11 +56,12 @@ export const SessionProvider = ({ children }) => {
     setDashboardState("idle");
     setSelectedSubject(null);
     setCurrentSession(null);
-    setEvaluation(null);
     setMessages([]);
     setProgress(null);
     setNumQuestions(6);
     setLoading(false);
+    setEvaluation(null);
+    setIsTyping(false);
   };
 
   return (
@@ -59,15 +74,17 @@ export const SessionProvider = ({ children }) => {
         progress,
         numQuestions,
         loading,
+        evaluation,
         setLoading,
         setNumQuestions,
+        setEvaluation,
         selectSubject,
         startSession,
         addMessage,
         updateProgress,
         resetDashboard,
-        evaluation,
-        setEvaluation,
+        isTyping,
+        setIsTyping,
       }}
     >
       {children}

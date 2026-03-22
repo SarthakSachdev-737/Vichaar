@@ -26,6 +26,7 @@ export default function AnalysisPage() {
       if (!sessionId) return;
       try {
         const res = await getStudySession(sessionId);
+        console.log("session", res.data);
         setSession(res.data.session);
       } catch (err) {
         console.error("Failed to fetch session:", err);
@@ -71,7 +72,7 @@ export default function AnalysisPage() {
     );
   }
 
-  const { evaluation, subject, createdAt, numQuestions } = session;
+  const { evaluation, subject, createdAt, numQuestions, answeredQuestions } = session;
 
   return (
     <PageBackground>
@@ -135,7 +136,7 @@ export default function AnalysisPage() {
                 border: "1px solid var(--color-ruleline)",
               }}
             >
-              {numQuestions} Questions
+              {answeredQuestions ? `${answeredQuestions}/${numQuestions} Questions` : `${numQuestions} Questions`}
             </span>
             <span
               className="text-xs px-2 py-0.5 rounded-sm"
@@ -167,15 +168,22 @@ export default function AnalysisPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <ScoreCard
             score={evaluation.score}
-            totalFeedback={evaluation.summary}
+            totalFeedback={evaluation.feedback}
           />
-          <DimensionBar dimensionAverages={evaluation.dimensionAverages} />
+          <DimensionBar
+            dimensionAverages={{
+              factuality: evaluation.factuality,
+              context: evaluation.context,
+              originality: evaluation.originality,
+              example: evaluation.example,
+            }}
+          />
         </div>
 
         {/* Feedback sections */}
         <FeedbackSection
           strengths={evaluation.strengths}
-          weaknesses={evaluation.weaknesses}
+          weaknesses={evaluation.improvements}
           nextSteps={evaluation.nextSteps}
         />
 

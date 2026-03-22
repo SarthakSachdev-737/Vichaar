@@ -15,6 +15,7 @@ export default function ChatInput() {
     updateProgress,
     setLoading,
     setEvaluation,
+    setIsTyping,
   } = useStudySession();
 
   const handleSend = async () => {
@@ -23,8 +24,9 @@ export default function ChatInput() {
     const userContent = input.trim();
     setInput("");
     setSending(true);
+    setIsTyping(true);
 
-    // Optimistically add user message
+    // Optimistically add user message without evaluation yet
     addMessage({ role: "user", content: userContent });
 
     try {
@@ -35,33 +37,46 @@ export default function ChatInput() {
 
       const { evaluation, nextQuestion, done, progress, report } = res.data;
 
-      // Update progress
+      // Update progress bar
       if (progress) updateProgress(progress);
 
+      // Hide typing indicator before showing response
+      setIsTyping(false);
+
       if (done) {
-        // Add final evaluation as AI message
+        addMessage({
+          role: "user",
+          content: userContent,
+          evaluation,
+          _replace: true,
+        });
+
         addMessage({
           role: "ai",
           content:
-            "Your Vichaar session is complete. Generating your analysis...",
-          evaluation,
+            "Your Vichaar session is complete. Preparing your analysis...",
         });
 
-        // Store report and redirect to analysis
         if (setEvaluation) setEvaluation(report);
         setTimeout(() => {
           router.push(`/analysis/${currentSession._id}`);
         }, 1500);
       } else {
-        // Add AI next question with evaluation attached
+        addMessage({
+          role: "user",
+          content: userContent,
+          evaluation,
+          _replace: true,
+        });
+
         addMessage({
           role: "ai",
           content: nextQuestion?.question ?? "",
-          evaluation,
         });
       }
     } catch (err) {
       console.error("Failed to send message:", err);
+      setIsTyping(false); // hide on error too
       addMessage({
         role: "ai",
         content: "Something went wrong. Please try again.",
@@ -87,7 +102,7 @@ export default function ChatInput() {
         background: "var(--color-cream)",
       }}
     >
-      <div className="flex gap-3 items-end">
+      <div className="flex gap-3 items-end max-w-3xl mx-auto">
         {/* Textarea */}
         <textarea
           value={input}
@@ -96,7 +111,7 @@ export default function ChatInput() {
           placeholder="Write your answer here... (Enter to send)"
           rows={3}
           disabled={sending}
-          className="flex-1 resize-none outline-none bg-transparent px-4 py-3 rounded-sm text-sm leading-relaxed"
+          className="flex-1 resize-none outline-none px-4 py-3 rounded-sm text-sm leading-relaxed"
           style={{
             fontFamily: "var(--font-lora)",
             color: "var(--color-inkdeep)",
@@ -110,7 +125,7 @@ export default function ChatInput() {
         <button
           onClick={handleSend}
           disabled={sending || !input.trim()}
-          className="shrink-0 w-12 h-12 rounded-sm flex items-center justify-center transition-all duration-150"
+          className="flex-shrink-0 w-12 h-12 rounded-sm flex items-center justify-center transition-all duration-150"
           style={{
             background:
               sending || !input.trim()
@@ -154,7 +169,7 @@ export default function ChatInput() {
       </div>
 
       <p
-        className="text-xs mt-2 text-inkfaded"
+        className="text-xs mt-2 text-inkfaded max-w-3xl mx-auto"
         style={{ fontFamily: "var(--font-courier)" }}
       >
         Shift + Enter for new line · Enter to send

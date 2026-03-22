@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-:root {
+@theme {
   /* Paper Backgrounds */
   --color-parchment: #f5f0e8;
   --color-cream: #fdf8f0;
@@ -21,38 +21,53 @@
   /* Borders & Lines */
   --color-ruleline: #d4c9b0;
   --color-marginline: #c8b89a;
-}
 
-@theme inline {
-  /* Paper Backgrounds */
-  --color-parchment: var(--color-parchment);
-  --color-cream: var(--color-cream);
-  --color-oldpaper: var(--color-oldpaper);
-  --color-warmwhite: var(--color-warmwhite);
-
-  /* Ink Text */
-  --color-inkdeep: var(--color-inkdeep);
-  --color-inkbrown: var(--color-inkbrown);
-  --color-inkfaded: var(--color-inkfaded);
-
-  /* Accents */
-  --color-scholarred: var(--color-scholarred);
-  --color-vintageteal: var(--color-vintageteal);
-  --color-agedgold: var(--color-agedgold);
-  --color-softrust: var(--color-softrust);
-
-  /* Borders */
-  --color-ruleline: var(--color-ruleline);
-  --color-marginline: var(--color-marginline);
-
-  /* Fonts */
-  --font-playfair: "Playfair Display", serif;
-  --font-lora: "Lora", serif;
-  --font-courier: "Courier Prime", monospace;
+  /* Fonts - bind to next/font variables */
+  --font-playfair: var(--font-playfair);
+  --font-lora: var(--font-lora);
+  --font-courier: var(--font-courier);
 }
 
 body {
   background: var(--color-parchment);
   color: var(--color-inkdeep);
   font-family: var(--font-lora), Arial, sans-serif;
+}
+
+/* ── Custom Scrollbar ── */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-ruleline) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--color-ruleline);
+  border-radius: 2px;
+  transition: background 0.2s ease;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--color-marginline);
+}
+
+*::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* ── Smooth scrolling ── */
+html {
+  scroll-behavior: smooth;
+}
+
+* {
+  scroll-behavior: smooth;
 }

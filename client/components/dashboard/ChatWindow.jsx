@@ -4,15 +4,16 @@ import { useStudySession } from "@/context/SessionContext";
 import ChatMessage from "@/components/dashboard/ChatMessage";
 import ChatInput from "@/components/dashboard/ChatInput";
 import ProgressBar from "@/components/dashboard/ProgressBar";
+import TypingIndicator from "@/components/dashboard/TypingIndicator";
 
 export default function ChatWindow() {
-  const { messages, progress, selectedSubject } = useStudySession();
+  const { messages, progress, selectedSubject, isTyping } = useStudySession();
   const bottomRef = useRef(null);
 
-  // Auto scroll to bottom on new messages
+  // Auto scroll to bottom on new messages or typing indicator
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [messages, isTyping]);
 
   return (
     <div className="flex-1 flex flex-col h-screen overflow-hidden">
@@ -36,6 +37,10 @@ export default function ChatWindow() {
           {messages.map((message, index) => (
             <ChatMessage key={index} message={message} />
           ))}
+
+          {/* Typing indicator — shown while AI is responding */}
+          {isTyping && <TypingIndicator />}
+
           <div ref={bottomRef} />
         </div>
       </div>
