@@ -43,7 +43,7 @@ export default function ChatInput() {
         addMessage({
           role: "ai",
           content:
-            "Your Vichar session is complete. Generating your analysis...",
+            "Your Vichaar session is complete. Generating your analysis...",
           evaluation,
         });
 
@@ -110,7 +110,7 @@ export default function ChatInput() {
         <button
           onClick={handleSend}
           disabled={sending || !input.trim()}
-          className="flex-shrink-0 w-12 h-12 rounded-sm flex items-center justify-center transition-all duration-150"
+          className="shrink-0 w-12 h-12 rounded-sm flex items-center justify-center transition-all duration-150"
           style={{
             background:
               sending || !input.trim()

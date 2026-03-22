@@ -26,9 +26,6 @@ export default function SubjectCard({ subject, isSelected, onClick }) {
       }}
     >
       <div className="flex items-center gap-3">
-        {/* Icon */}
-        <span className="text-xl flex-shrink-0">{subject.icon}</span>
-
         {/* Text */}
         <div className="flex-1 min-w-0">
           <p
@@ -58,7 +55,7 @@ export default function SubjectCard({ subject, isSelected, onClick }) {
         {/* Selected indicator */}
         {isSelected && (
           <div
-            className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+            className="w-1.5 h-1.5 rounded-full shrink-0"
             style={{ background: "var(--color-agedgold)" }}
           />
         )}

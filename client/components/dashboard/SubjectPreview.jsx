@@ -37,19 +37,8 @@ export default function SubjectPreview() {
 
   return (
     <div className="flex-1 flex flex-col items-center justify-center h-full px-10">
-      {/* Subject icon + name */}
+      {/* Subject name */}
       <div className="text-center mb-10">
-        <div
-          className="w-20 h-20 rounded-sm flex items-center justify-center mx-auto mb-5"
-          style={{
-            background: "var(--color-cream)",
-            border: "1.5px solid var(--color-ruleline)",
-            boxShadow: "3px 3px 0px var(--color-ruleline)",
-          }}
-        >
-          <span className="text-4xl">{selectedSubject?.icon}</span>
-        </div>
-
         <h2
           className="text-3xl text-inkdeep mb-2"
           style={{ fontFamily: "var(--font-playfair)" }}
@@ -143,7 +132,7 @@ export default function SubjectPreview() {
             e.currentTarget.style.boxShadow = "3px 3px 0px #9b2e22";
           }}
         >
-          Begin Vichar →
+          Begin Vichaar →
         </button>
       )}
 

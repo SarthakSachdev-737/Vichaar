@@ -1,5 +1,5 @@
 "use client";
-import VichaarLogo from "@/components/shared/VichaarLogo";
+import VichaarLogoName from "@/components/shared/VichaarLogoName";
 import GoogleButton from "@/components/shared/GoogleButton";
 
 export default function LoginCard({ onLogin, mounted }) {
@@ -46,7 +46,7 @@ export default function LoginCard({ onLogin, mounted }) {
 
             {/* Logo */}
             <div className="flex justify-center mb-3">
-              <VichaarLogo size="lg" />
+              <VichaarLogoName size="lg" />
             </div>
 
             <p
