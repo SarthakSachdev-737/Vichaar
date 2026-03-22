@@ -32,7 +32,7 @@ export default function ChatWindow() {
           backgroundSize: "100% 32px",
         }}
       >
-        <div className="flex flex-col gap-6 max-w-3xl mx-auto">
+        <div className="flex flex-col gap-6 mx-auto">
           {messages.map((message, index) => (
             <ChatMessage key={index} message={message} />
           ))}

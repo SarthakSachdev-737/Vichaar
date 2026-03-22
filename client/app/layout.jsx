@@ -23,7 +23,7 @@ const courierPrime = Courier_Prime({
 });
 
 export const metadata = {
-  title: "Vichar",
+  title: "Vichaar",
   description: "AI powered learning platform",
 };
 

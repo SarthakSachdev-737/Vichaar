@@ -1,5 +1,6 @@
 "use client";
 import ReactMarkdown from "react-markdown";
+import VichaarLogo from "@/components/shared/VichaarLogo";
 
 export default function ChatMessage({ message }) {
   const isAi = message.role === "ai";
@@ -9,7 +10,7 @@ export default function ChatMessage({ message }) {
       {/* AI avatar */}
       {isAi && (
         <div
-          className="w-7 h-7 rounded-sm flex-shrink-0 flex items-center justify-center mt-1"
+          className="w-7 h-7 rounded-sm shrink-0 flex items-center justify-center mt-1"
           style={{
             background: "var(--color-inkdeep)",
             border: "1px solid var(--color-inkbrown)",
@@ -23,14 +24,14 @@ export default function ChatMessage({ message }) {
               lineHeight: 1,
             }}
           >
-            वि
+            <VichaarLogo size="sm" />
           </span>
         </div>
       )}
 
       {/* Bubble */}
       <div
-        className="max-w-lg px-4 py-3 rounded-sm"
+        className="px-4 py-3 rounded-sm max-w-lg"
         style={
           isAi
             ? {
@@ -55,7 +56,7 @@ export default function ChatMessage({ message }) {
             color: isAi ? "var(--color-inkfaded)" : "rgba(253,248,240,0.5)",
           }}
         >
-          {isAi ? "Vichar AI" : "You"}
+          {isAi ? "Vichaar AI" : "You"}
         </p>
 
         {/* Content */}
@@ -104,7 +105,7 @@ export default function ChatMessage({ message }) {
       {/* User avatar */}
       {!isAi && (
         <div
-          className="w-7 h-7 rounded-sm flex-shrink-0 flex items-center justify-center mt-1"
+          className="w-7 h-7 rounded-sm shrink-0 flex items-center justify-center mt-1"
           style={{
             background: "var(--color-agedgold)",
             border: "1px solid #a88a38",

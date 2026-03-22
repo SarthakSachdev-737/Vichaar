@@ -27,8 +27,8 @@ export default function EmptyState() {
         className="text-inkfaded text-sm text-center leading-relaxed max-w-xs"
         style={{ fontFamily: "var(--font-lora)" }}
       >
-        Select a subject from the left sidebar to begin your Vichar session. The
-        AI will guide your thinking.
+        Select a subject from the left sidebar to begin your Vichaar session.
+        The AI will guide your thinking.
       </p>
 
       {/* Decorative divider */}
