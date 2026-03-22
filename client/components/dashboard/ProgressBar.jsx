@@ -16,7 +16,7 @@ export default function ProgressBar({ progress, subject }) {
     >
       {/* Subject name */}
       <p
-        className="text-sm flex-shrink-0"
+        className="text-sm shrink-0"
         style={{
           fontFamily: "var(--font-lora)",
           color: "var(--color-inkbrown)",
@@ -41,7 +41,7 @@ export default function ProgressBar({ progress, subject }) {
 
       {/* Count */}
       <p
-        className="text-xs flex-shrink-0"
+        className="text-xs shrink-0"
         style={{
           fontFamily: "var(--font-courier)",
           color: "var(--color-inkfaded)",
@@ -52,7 +52,7 @@ export default function ProgressBar({ progress, subject }) {
 
       {/* Remaining badge */}
       <span
-        className="text-xs px-2 py-0.5 rounded-sm flex-shrink-0"
+        className="text-xs px-2 py-0.5 rounded-sm shrink-0"
         style={{
           fontFamily: "var(--font-courier)",
           background: "rgba(201, 168, 76, 0.15)",

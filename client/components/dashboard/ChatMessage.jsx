@@ -313,13 +313,11 @@ export default function ChatMessage({ message }) {
 
       {/* User avatar */}
       {!isAi && (
-        <div
-          className="w-7 h-7 flex-shrink-0 flex items-center justify-center mt-1"
-        >
+        <div className="w-7 h-7 shrink-0 flex items-center justify-center mt-1">
           {user?.avatar ? (
-            <img 
-              src={user.avatar} 
-              alt={user.name || "User"} 
+            <img
+              src={user.avatar}
+              alt={user.name || "User"}
               className="w-full h-full rounded-full object-cover"
               style={{
                 boxShadow: "0 2px 4px rgba(26,20,16,0.15)",
