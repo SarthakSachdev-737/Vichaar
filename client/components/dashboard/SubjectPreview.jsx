@@ -74,7 +74,7 @@ export default function SubjectPreview() {
             <button
               key={n}
               onClick={() => setNumQuestions(n)}
-              className="w-14 h-14 rounded-sm transition-all duration-150 text-lg"
+              className="w-14 h-14 rounded-sm transition-all duration-150 text-lg cursor-pointer"
               style={{
                 fontFamily: "var(--font-playfair)",
                 background:
@@ -113,7 +113,7 @@ export default function SubjectPreview() {
       ) : (
         <button
           onClick={handleStart}
-          className="px-12 py-4 rounded-sm transition-all duration-150"
+          className="px-12 py-4 rounded-sm transition-all duration-150 cursor-pointer"
           style={{
             background: "var(--color-scholarred)",
             color: "var(--color-cream)",

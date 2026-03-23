@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import PageBackground from "@/components/shared/PageBackground";
 import LoginCard from "@/components/shared/LoginCard";
-import SubjectTags from "@/components/shared/SubjectTags";
 import LoadingSpinner from "@/components/shared/LoadingSpinner";
 
 export default function LoginPage() {
@@ -57,9 +56,7 @@ export default function LoginPage() {
           opacity: mounted ? 1 : 0,
           transition: "opacity 0.7s ease 0.4s",
         }}
-      >
-        <SubjectTags />
-      </div>
+      ></div>
     </PageBackground>
   );
 }

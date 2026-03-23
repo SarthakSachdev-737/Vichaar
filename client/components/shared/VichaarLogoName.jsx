@@ -10,7 +10,7 @@ export default function VichaarLogoName({ size = "md", dark = false }) {
   const s = sizes[size];
 
   return (
-    <div className={`flex items-center ${s.gap}`}>
+    <div className={`flex items-center ${s.gap} select-none`}>
       {/* Logo image — put your logo file as /public/logo.png */}
       <div
         className={`${s.img} rounded-sm shrink-0 overflow-hidden relative`}

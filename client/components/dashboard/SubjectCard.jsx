@@ -16,7 +16,6 @@ export default function SubjectCard({
           ? "1px solid var(--color-inkbrown)"
           : "1px solid transparent",
         boxShadow: isSelected ? "2px 2px 0px var(--color-inkbrown)" : "none",
-        opacity: isDisabled ? 0.4 : 1,
         cursor: isDisabled ? "not-allowed" : "pointer",
       }}
       onMouseEnter={(e) => {

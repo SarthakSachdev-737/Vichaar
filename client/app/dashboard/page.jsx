@@ -14,6 +14,7 @@ export default function DashboardPage() {
   const { dashboardState } = useStudySession();
   const router = useRouter();
 
+  // Redirect to login if not authenticated
   useEffect(() => {
     if (!loading && !isAuthenticated) router.push("/login");
   }, [loading, isAuthenticated, router]);
@@ -34,10 +35,7 @@ export default function DashboardPage() {
       className="flex h-screen overflow-hidden"
       style={{ background: "var(--color-parchment)" }}
     >
-      {/* Left Sidebar */}
       <Sidebar />
-
-      {/* Right Content — 3 states */}
       <div className="flex-1 flex overflow-hidden">
         {dashboardState === "idle" && <EmptyState />}
         {dashboardState === "selected" && <SubjectPreview />}
