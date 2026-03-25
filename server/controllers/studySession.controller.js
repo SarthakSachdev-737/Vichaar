@@ -22,6 +22,7 @@ export const startSession = async (req, res, next) => {
         // 1. Hit AI model
         const aiRes = await axios.post(`${AI_URL}/interview/start`, {
             num_questions: numQuestions,
+            subject: subject.toLowerCase(),
         });
         const { session_id: aiSessionId, current_question, progress } = aiRes.data;
 
