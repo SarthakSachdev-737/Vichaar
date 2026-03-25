@@ -25,6 +25,14 @@ export const getCompletedSessionsByUser = async (userId) => {
     return await Session.find({ userId, status: "completed" }).sort({ createdAt: -1 });
 };
 
+export const deleteSession = async (sessionId) => {
+    return await Session.findByIdAndDelete(sessionId);
+};
+
+export const deleteMessagesBySession = async (sessionId) => {
+    return await Message.deleteMany({ sessionId });
+};
+
 export const markSessionCompleted = async (sessionId, evaluation) => {
     return await Session.findByIdAndUpdate(
         sessionId,

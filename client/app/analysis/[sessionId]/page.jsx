@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import { useStudySession } from "@/context/SessionContext";
 import { getStudySession } from "@/utils/axios";
 import PageBackground from "@/components/shared/PageBackground";
 import VichaarLogoName from "@/components/shared/VichaarLogoName";
@@ -12,10 +13,14 @@ import LoadingSpinner from "@/components/shared/LoadingSpinner";
 
 export default function AnalysisPage() {
   const { isAuthenticated, loading: authLoading } = useAuth();
+  const { dashboardState, isSessionComplete, resetDashboard } =
+    useStudySession();
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
   const { sessionId } = useParams();
+
+  const hasActiveSession = dashboardState === "started" || isSessionComplete;
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) router.push("/login");
@@ -26,6 +31,7 @@ export default function AnalysisPage() {
       if (!sessionId) return;
       try {
         const res = await getStudySession(sessionId);
+        console.log("session", res.data);
         setSession(res.data.session);
       } catch (err) {
         console.error("Failed to fetch session:", err);
@@ -35,6 +41,17 @@ export default function AnalysisPage() {
     };
     fetchSession();
   }, [sessionId]);
+
+  // Keeps context state intact — chat history preserved
+  const handleBackToSession = () => {
+    router.push("/dashboard");
+  };
+
+  // Resets everything — clean idle state
+  const handleStartNew = () => {
+    resetDashboard();
+    router.push("/dashboard");
+  };
 
   if (authLoading || loading) {
     return (
@@ -55,7 +72,7 @@ export default function AnalysisPage() {
             No analysis found for this session.
           </p>
           <button
-            onClick={() => router.push("/dashboard")}
+            onClick={handleStartNew}
             className="mt-4 px-6 py-2 rounded-sm text-sm"
             style={{
               fontFamily: "var(--font-lora)",
@@ -71,7 +88,8 @@ export default function AnalysisPage() {
     );
   }
 
-  const { evaluation, subject, createdAt, numQuestions } = session;
+  const { evaluation, subject, createdAt, numQuestions, answeredQuestions } =
+    session;
 
   return (
     <PageBackground>
@@ -83,25 +101,28 @@ export default function AnalysisPage() {
         >
           <VichaarLogoName size="sm" />
 
-          <button
-            onClick={() => router.push("/dashboard")}
-            className="flex items-center gap-2 px-4 py-2 rounded-sm text-sm transition-all duration-150"
-            style={{
-              fontFamily: "var(--font-lora)",
-              color: "var(--color-inkfaded)",
-              border: "1px solid var(--color-ruleline)",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = "var(--color-inkdeep)";
-              e.currentTarget.style.color = "var(--color-cream)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = "transparent";
-              e.currentTarget.style.color = "var(--color-inkfaded)";
-            }}
-          >
-            ← Back to Dashboard
-          </button>
+          {/* Top button — only shown when active session exists */}
+          {hasActiveSession && (
+            <button
+              onClick={handleBackToSession}
+              className="flex items-center gap-2 px-4 py-2 rounded-sm text-sm transition-all duration-150"
+              style={{
+                fontFamily: "var(--font-lora)",
+                color: "var(--color-inkfaded)",
+                border: "1px solid var(--color-ruleline)",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = "var(--color-inkdeep)";
+                e.currentTarget.style.color = "var(--color-cream)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "transparent";
+                e.currentTarget.style.color = "var(--color-inkfaded)";
+              }}
+            >
+              ← Back to Study Session
+            </button>
+          )}
         </div>
 
         {/* Session info */}
@@ -135,7 +156,9 @@ export default function AnalysisPage() {
                 border: "1px solid var(--color-ruleline)",
               }}
             >
-              {numQuestions} Questions
+              {answeredQuestions
+                ? `${answeredQuestions}/${numQuestions} Questions`
+                : `${numQuestions} Questions`}
             </span>
             <span
               className="text-xs px-2 py-0.5 rounded-sm"
@@ -167,15 +190,22 @@ export default function AnalysisPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <ScoreCard
             score={evaluation.score}
-            totalFeedback={evaluation.summary}
+            totalFeedback={evaluation.feedback}
           />
-          <DimensionBar dimensionAverages={evaluation.dimensionAverages} />
+          <DimensionBar
+            dimensionAverages={{
+              factuality: evaluation.factuality,
+              context: evaluation.context,
+              originality: evaluation.originality,
+              example: evaluation.example,
+            }}
+          />
         </div>
 
         {/* Feedback sections */}
         <FeedbackSection
           strengths={evaluation.strengths}
-          weaknesses={evaluation.weaknesses}
+          weaknesses={evaluation.improvements}
           nextSteps={evaluation.nextSteps}
         />
 
@@ -191,8 +221,9 @@ export default function AnalysisPage() {
             Session ID: {sessionId?.slice(-8)}
           </p>
 
+          {/* Start New Session — always at bottom */}
           <button
-            onClick={() => router.push("/dashboard")}
+            onClick={handleStartNew}
             className="px-8 py-3 rounded-sm transition-all duration-150"
             style={{
               fontFamily: "var(--font-lora)",

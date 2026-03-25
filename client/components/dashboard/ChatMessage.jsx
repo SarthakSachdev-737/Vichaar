@@ -1,9 +1,240 @@
 "use client";
+import { useState } from "react";
+import { useAuth } from "@/context/AuthContext";
 import ReactMarkdown from "react-markdown";
-import VichaarLogo from "@/components/shared/VichaarLogo";
+import VichaarLogo from "../shared/VichaarLogo";
 
+// ── Score pill + modal details ──────────────────────────────
+function EvaluationPill({ evaluation }) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const getScoreColor = (score) => {
+    if (score >= 8)
+      return {
+        bg: "rgba(46,125,114,0.15)",
+        color: "var(--color-vintageteal)",
+        border: "rgba(46,125,114,0.35)",
+      };
+    if (score >= 5)
+      return {
+        bg: "rgba(201,168,76,0.15)",
+        color: "var(--color-agedgold)",
+        border: "rgba(201,168,76,0.35)",
+      };
+    return {
+      bg: "rgba(192,57,43,0.15)",
+      color: "var(--color-scholarred)",
+      border: "rgba(192,57,43,0.35)",
+    };
+  };
+
+  const c = getScoreColor(evaluation.score);
+
+  return (
+    <>
+      {/* Pill */}
+      <button
+        onClick={() => setIsOpen(true)}
+        className="flex items-center gap-1.5 px-3 py-1.5 rounded-sm cursor-pointer transition-all duration-200 hover:scale-[1.02]"
+        style={{
+          background: c.bg,
+          border: `1px solid ${c.border}`,
+          color: c.color,
+        }}
+        aria-label="View evaluation details"
+      >
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+        </svg>
+        <span
+          style={{
+            fontFamily: "var(--font-courier)",
+            fontSize: "0.70rem",
+            fontWeight: "700",
+          }}
+        >
+          {evaluation.score}/10
+        </span>
+      </button>
+
+      {/* Fixed Modal Overlay */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 z-100 flex items-center justify-center p-4 sm:p-6 animate-in fade-in duration-200"
+          style={{
+            background: "rgba(26,20,16,0.4)",
+            backdropFilter: "blur(2px)",
+          }}
+          onClick={() => setIsOpen(false)}
+        >
+          <div
+            className="relative w-2xl text-left rounded-sm overflow-hidden animate-in zoom-in-95 duration-200"
+            style={{
+              background: "var(--color-warmwhite)",
+              border: `1px solid var(--color-ruleline)`,
+              boxShadow: `0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)`,
+              maxHeight: "90vh",
+              display: "flex",
+              flexDirection: "column",
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Top border accent based on score */}
+            <div
+              className="h-1.5 w-full shrink-0"
+              style={{ background: c.color }}
+            />
+
+            <div className="p-5 sm:p-6 overflow-y-auto">
+              <div className="flex items-start justify-between mb-4">
+                <div>
+                  <p
+                    className="text-xs uppercase tracking-widest font-bold mb-1"
+                    style={{
+                      fontFamily: "var(--font-courier)",
+                      color: "var(--color-inkdeep)",
+                    }}
+                  >
+                    Vichaar Assessment
+                  </p>
+                  <span
+                    className="text-3xl font-bold"
+                    style={{
+                      fontFamily: "var(--font-playfair)",
+                      color: c.color,
+                    }}
+                  >
+                    {evaluation.score}/10
+                  </span>
+                </div>
+
+                {/* Close button */}
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="p-1.5 rounded-sm hover:bg-black/5 transition-colors"
+                  aria-label="Close"
+                >
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="var(--color-inkfaded)"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </button>
+              </div>
+
+              {/* Feedback text */}
+              {evaluation.feedback && (
+                <div
+                  className="p-4 rounded-sm mb-5"
+                  style={{
+                    background: "var(--color-cream)",
+                    border: "1px solid var(--color-ruleline)",
+                  }}
+                >
+                  <p
+                    className="text-sm leading-relaxed"
+                    style={{
+                      fontFamily: "var(--font-lora)",
+                      color: "var(--color-inkbrown)",
+                    }}
+                  >
+                    {evaluation.feedback}
+                  </p>
+                </div>
+              )}
+
+              {/* 2-column layout for Strengths & Improvements */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                {/* Strengths */}
+                {evaluation.strengths?.length > 0 && (
+                  <div
+                    className="p-4 rounded-sm"
+                    style={{
+                      background: "rgba(46,125,114,0.05)",
+                      borderLeft: "3px solid var(--color-vintageteal)",
+                    }}
+                  >
+                    <p
+                      className="text-[0.7rem] uppercase tracking-widest mb-3 font-bold"
+                      style={{
+                        fontFamily: "var(--font-courier)",
+                        color: "var(--color-vintageteal)",
+                      }}
+                    >
+                      ✦ Strengths
+                    </p>
+                    <ul className="flex flex-col gap-2">
+                      {evaluation.strengths.map((s, i) => (
+                        <li
+                          key={i}
+                          className="text-sm leading-relaxed"
+                          style={{
+                            fontFamily: "var(--font-lora)",
+                            color: "var(--color-inkdeep)",
+                          }}
+                        >
+                          • {s}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {/* Improvements */}
+                {evaluation.improvements?.length > 0 && (
+                  <div
+                    className="p-4 rounded-sm"
+                    style={{
+                      background: "rgba(192,57,43,0.05)",
+                      borderLeft: "3px solid var(--color-scholarred)",
+                    }}
+                  >
+                    <p
+                      className="text-[0.7rem] uppercase tracking-widest mb-3 font-bold"
+                      style={{
+                        fontFamily: "var(--font-courier)",
+                        color: "var(--color-scholarred)",
+                      }}
+                    >
+                      ◈ Areas to Improve
+                    </p>
+                    <ul className="flex flex-col gap-2">
+                      {evaluation.improvements.map((imp, i) => (
+                        <li
+                          key={i}
+                          className="text-sm leading-relaxed"
+                          style={{
+                            fontFamily: "var(--font-lora)",
+                            color: "var(--color-inkdeep)",
+                          }}
+                        >
+                          • {imp}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+// ── Main ChatMessage component ────────────────────────────
 export default function ChatMessage({ message }) {
   const isAi = message.role === "ai";
+  const { user } = useAuth();
 
   return (
     <div className={`flex gap-3 ${isAi ? "justify-start" : "justify-end"}`}>
@@ -29,98 +260,92 @@ export default function ChatMessage({ message }) {
         </div>
       )}
 
-      {/* Bubble */}
+      {/* Bubble + score pill wrapper */}
       <div
-        className="px-4 py-3 rounded-sm max-w-lg"
-        style={
-          isAi
-            ? {
-                background: "var(--color-cream)",
-                border: "1px solid var(--color-ruleline)",
-                boxShadow: "2px 2px 0px var(--color-ruleline)",
-                color: "var(--color-inkdeep)",
-              }
-            : {
-                background: "var(--color-inkdeep)",
-                border: "1px solid var(--color-inkbrown)",
-                boxShadow: "2px 2px 0px var(--color-inkbrown)",
-                color: "var(--color-cream)",
-              }
-        }
+        className={`flex flex-col ${isAi ? "items-start" : "items-end"} max-w-lg`}
       >
-        {/* Role label */}
-        <p
-          className="text-xs mb-1.5 uppercase tracking-widest"
-          style={{
-            fontFamily: "var(--font-courier)",
-            color: isAi ? "var(--color-inkfaded)" : "rgba(253,248,240,0.5)",
-          }}
-        >
-          {isAi ? "Vichaar AI" : "You"}
-        </p>
-
-        {/* Content */}
+        {/* Bubble */}
         <div
-          className="text-sm leading-relaxed prose prose-sm max-w-none"
-          style={{ fontFamily: "var(--font-lora)" }}
+          className="px-4 py-3 rounded-sm w-full"
+          style={
+            isAi
+              ? {
+                  background: "var(--color-cream)",
+                  border: "1px solid var(--color-ruleline)",
+                  boxShadow: "2px 2px 0px var(--color-ruleline)",
+                  color: "var(--color-inkdeep)",
+                }
+              : {
+                  background: "var(--color-inkdeep)",
+                  border: "1px solid var(--color-inkbrown)",
+                  boxShadow: "2px 2px 0px var(--color-inkbrown)",
+                  color: "var(--color-cream)",
+                }
+          }
         >
-          <ReactMarkdown>{message.content}</ReactMarkdown>
+          {/* Role label */}
+          <p
+            className="text-xs mb-1.5 uppercase tracking-widest"
+            style={{
+              fontFamily: "var(--font-courier)",
+              color: isAi ? "var(--color-inkfaded)" : "rgba(253,248,240,0.5)",
+            }}
+          >
+            {isAi ? "Vichaar AI" : "You"}
+          </p>
+
+          {/* Content */}
+          <div
+            className="text-sm leading-relaxed"
+            style={{ fontFamily: "var(--font-lora)" }}
+          >
+            <ReactMarkdown>{message.content}</ReactMarkdown>
+          </div>
         </div>
 
-        {/* Evaluation badge if present */}
-        {message.evaluation && (
-          <div
-            className="mt-3 pt-3 flex items-center gap-3 flex-wrap"
-            style={{ borderTop: "1px solid rgba(212,201,176,0.4)" }}
-          >
-            {/* Score */}
-            <span
-              className="text-xs px-2 py-0.5 rounded-sm"
-              style={{
-                fontFamily: "var(--font-courier)",
-                background: "rgba(201,168,76,0.15)",
-                color: "var(--color-agedgold)",
-                border: "1px solid rgba(201,168,76,0.3)",
-              }}
-            >
-              Score: {message.evaluation.score}/10
-            </span>
-
-            {/* Feedback */}
-            {message.evaluation.feedback && (
-              <p
-                className="text-xs w-full mt-1"
-                style={{
-                  fontFamily: "var(--font-courier)",
-                  color: "var(--color-inkfaded)",
-                }}
-              >
-                {message.evaluation.feedback}
-              </p>
-            )}
+        {/* Score pill — only on user messages that have evaluation */}
+        {!isAi && message.evaluation && (
+          <div className="mt-1.5 mr-0.5">
+            <EvaluationPill evaluation={message.evaluation} />
           </div>
         )}
       </div>
 
       {/* User avatar */}
       {!isAi && (
-        <div
-          className="w-7 h-7 rounded-sm shrink-0 flex items-center justify-center mt-1"
-          style={{
-            background: "var(--color-agedgold)",
-            border: "1px solid #a88a38",
-          }}
-        >
-          <span
-            style={{
-              fontFamily: "var(--font-playfair)",
-              color: "var(--color-inkdeep)",
-              fontSize: "0.75rem",
-              fontWeight: "bold",
-            }}
-          >
-            U
-          </span>
+        <div className="w-7 h-7 shrink-0 flex items-center justify-center mt-1">
+          {user?.avatar ? (
+            <img
+              src={user.avatar}
+              alt={user.name || "User"}
+              className="w-full h-full rounded-full object-cover"
+              style={{
+                boxShadow: "0 2px 4px rgba(26,20,16,0.15)",
+                border: "1px solid var(--color-ruleline)",
+              }}
+            />
+          ) : (
+            <div
+              className="w-full h-full rounded-full flex items-center justify-center"
+              style={{
+                background: "var(--color-inkdeep)",
+                color: "var(--color-cream)",
+                boxShadow: "0 2px 6px rgba(26,20,16,0.3)",
+                border: "1px solid var(--color-inkbrown)",
+              }}
+            >
+              <span
+                style={{
+                  fontFamily: "var(--font-playfair)",
+                  fontSize: "0.75rem",
+                  fontWeight: "bold",
+                  lineHeight: 1,
+                }}
+              >
+                {user?.name ? user.name.charAt(0).toUpperCase() : "U"}
+              </span>
+            </div>
+          )}
         </div>
       )}
     </div>

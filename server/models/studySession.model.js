@@ -19,6 +19,9 @@ const studySessionSchema = new mongoose.Schema({
         type: Number,
         default: 6,
     },
+    answeredQuestions: {
+        type: Number,
+    },
     evaluation: {
         score: Number,
         factuality: Number,
@@ -29,6 +32,7 @@ const studySessionSchema = new mongoose.Schema({
         feedback: String,
         strengths: [String],
         improvements: [String],
+        nextSteps: [String],
     },
     aiSessionId: {
         type: String,

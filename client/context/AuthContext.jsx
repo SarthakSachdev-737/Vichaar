@@ -18,7 +18,7 @@ export const AuthProvider = ({ children }) => {
     : null;
 
   const loginWithGoogle = () => signIn("google", { callbackUrl: "/dashboard" });
-  const logout = () => signOut({ callbackUrl: "/login" });
+  const logout = () => signOut({ callbackUrl: "/" });
 
   return (
     <AuthContext.Provider

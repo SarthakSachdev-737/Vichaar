@@ -54,4 +54,7 @@ export const getSessionHistory = (userId) =>
 export const sendChatMessage = (data) =>
   api.post("/api/chat/message", data);
 
+export const abandonStudySession = (sessionId) =>
+  api.delete(`/api/studySession/${sessionId}/abandon`);
+
 export default api;

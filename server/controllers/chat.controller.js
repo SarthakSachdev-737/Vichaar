@@ -43,7 +43,7 @@ export const sendMessage = async (req, res, next) => {
         if (done) {
             const reportRes = await axios.get(`${AI_URL}/interview/${session.aiSessionId}/report`);
             const report = reportRes.data;
-
+            console.log("report", report);
             await completeSession(sessionId, report);
 
             return res.status(200).json({

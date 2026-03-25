@@ -19,7 +19,6 @@ export default function Sidebar() {
 
   const isSessionStarted = dashboardState === "started";
 
-  // Fetch subjects on mount
   useEffect(() => {
     const fetchSubjects = async () => {
       try {
@@ -34,7 +33,6 @@ export default function Sidebar() {
     fetchSubjects();
   }, []);
 
-  // Fetch session history when mongoUser is available
   useEffect(() => {
     const fetchHistory = async () => {
       if (!mongoUser?._id) return;
@@ -87,7 +85,8 @@ export default function Sidebar() {
                 key={subject.id}
                 subject={subject}
                 isSelected={selectedSubject?.id === subject.id}
-                onClick={isSessionStarted ? () => {} : selectSubject}
+                onClick={selectSubject}
+                isDisabled={isSessionStarted}
               />
             ))}
           </div>
@@ -99,10 +98,10 @@ export default function Sidebar() {
             className="text-xs text-center mt-3 px-4"
             style={{
               fontFamily: "var(--font-courier)",
-              color: "var(--color-inkfaded)",
+              color: "var(--color-scholarred)",
             }}
           >
-            Session in progress — finish to switch subject
+            Session in progress — finish it to switch the subject
           </p>
         )}
 
@@ -124,20 +123,31 @@ export default function Sidebar() {
             </p>
 
             <div className="flex flex-col gap-1">
-              {history.slice(0, 5).map((session) => (
+              {history.slice(0, 3).map((session) => (
                 <div
                   key={session._id}
-                  className="px-3 py-2 rounded-sm cursor-pointer transition-all duration-150"
+                  className="px-3 py-2 rounded-sm transition-all duration-150"
                   style={{
                     background: "rgba(212, 201, 176, 0.3)",
                     border: "1px solid var(--color-ruleline)",
+                    cursor: isSessionStarted ? "not-allowed" : "pointer",
                   }}
-                  onClick={() => router.push(`/analysis/${session._id}`)}
+                  onClick={() => {
+                    if (!isSessionStarted) {
+                      router.push(`/analysis/${session._id}`);
+                    }
+                  }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.background = "rgba(212,201,176,0.6)";
+                    if (!isSessionStarted) {
+                      e.currentTarget.style.background =
+                        "rgba(212,201,176,0.6)";
+                    }
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.background = "rgba(212,201,176,0.3)";
+                    if (!isSessionStarted) {
+                      e.currentTarget.style.background =
+                        "rgba(212,201,176,0.3)";
+                    }
                   }}
                 >
                   <div className="flex justify-between items-center">
@@ -178,20 +188,25 @@ export default function Sidebar() {
 
             {/* View all */}
             <button
-              onClick={() => router.push("/history")}
+              onClick={() => !isSessionStarted && router.push("/history")}
               className="w-full mt-2 py-2 rounded-sm text-xs transition-all duration-150"
               style={{
                 fontFamily: "var(--font-courier)",
                 color: "var(--color-inkfaded)",
                 border: "1px solid var(--color-ruleline)",
+                cursor: isSessionStarted ? "not-allowed" : "pointer",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = "var(--color-inkdeep)";
-                e.currentTarget.style.color = "var(--color-cream)";
+                if (!isSessionStarted) {
+                  e.currentTarget.style.background = "var(--color-inkdeep)";
+                  e.currentTarget.style.color = "var(--color-cream)";
+                }
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.background = "transparent";
-                e.currentTarget.style.color = "var(--color-inkfaded)";
+                if (!isSessionStarted) {
+                  e.currentTarget.style.background = "transparent";
+                  e.currentTarget.style.color = "var(--color-inkfaded)";
+                }
               }}
             >
               View All Sessions →

@@ -25,6 +25,11 @@ const courierPrime = Courier_Prime({
 export const metadata = {
   title: "Vichaar",
   description: "AI powered learning platform",
+  icons: {
+    icon: "/vichaar3.png",
+    shortcut: "/vichaar3.png",
+    apple: "/vichaar3.png",
+  },
 };
 
 export default async function RootLayout({ children }) {
