@@ -9,6 +9,7 @@ export const saveMessage = async ({ sessionId, role, content }) => {
     return await Message.create({ sessionId, role, content });
 };
 
+
 export const findSessionById = async (sessionId) => {
     return await Session.findById(sessionId);
 };

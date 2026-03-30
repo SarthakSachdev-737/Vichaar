@@ -22,7 +22,7 @@ export const startSession = async (req, res, next) => {
         // 1. Hit AI model
         const aiRes = await axios.post(`${AI_URL}/interview/start`, {
             num_questions: numQuestions,
-            subject: subject.toLowerCase(),
+            subject_key: subject.toLowerCase(),
         });
         const { session_id: aiSessionId, current_question, progress } = aiRes.data;
 
@@ -101,6 +101,24 @@ export const abandonSession = async (req, res) => {
         await deleteSession(sessionId);
 
         res.status(200).json({ success: true, message: "Session abandoned and deleted" });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const terminateSession = async (req, res) => {
+    try {
+        const { sessionId } = req.params;
+
+        const session = await findSessionById(sessionId);
+        if (!session) {
+            return res.status(404).json({ success: false, message: "Session not found" });
+        }
+
+        await deleteMessagesBySession(sessionId);
+        await deleteSession(sessionId);
+
+        res.status(200).json({ success: true, message: "Session terminated and deleted" });
     } catch (error) {
         next(error);
     }
