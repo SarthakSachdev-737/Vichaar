@@ -43,7 +43,7 @@ export default function SubjectPreview() {
           className="text-3xl text-inkdeep mb-2"
           style={{ fontFamily: "var(--font-playfair)" }}
         >
-          {selectedSubject?.name}
+          {selectedSubject?.label}
         </h2>
 
         <p

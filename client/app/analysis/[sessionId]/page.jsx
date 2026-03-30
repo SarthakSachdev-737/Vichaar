@@ -128,7 +128,7 @@ export default function AnalysisPage() {
         {/* Session info */}
         <div className="mb-8">
           <h1
-            className="text-4xl text-inkdeep mb-2"
+            className="text-4xl text-inkdeep mb-2 capitalize"
             style={{ fontFamily: "var(--font-playfair)" }}
           >
             {subject}

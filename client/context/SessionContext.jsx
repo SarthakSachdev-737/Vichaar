@@ -14,6 +14,7 @@ export const SessionProvider = ({ children }) => {
   const [isTyping, setIsTyping] = useState(false);
   const [evaluation, setEvaluation] = useState(null);
   const [isSessionComplete, setIsSessionComplete] = useState(false);
+  const [isInjectionTerminated, setIsInjectionTerminated] = useState(false);
 
   const selectSubject = (subject) => {
     setSelectedSubject(subject);
@@ -22,6 +23,7 @@ export const SessionProvider = ({ children }) => {
     setCurrentSession(null);
     setProgress(null);
     setIsSessionComplete(false);
+    setIsInjectionTerminated(false);
   };
 
   const startSession = (session, firstQuestion, progressInfo) => {
@@ -30,6 +32,7 @@ export const SessionProvider = ({ children }) => {
     setMessages([{ role: "ai", content: firstQuestion.question }]);
     setDashboardState("started");
     setIsSessionComplete(false);
+    setIsInjectionTerminated(false);
   };
 
   const addMessage = (message) => {
@@ -69,6 +72,7 @@ export const SessionProvider = ({ children }) => {
     setIsTyping(false);
     setEvaluation(null);
     setIsSessionComplete(false);
+    setIsInjectionTerminated(false);
   };
 
   return (
@@ -84,10 +88,12 @@ export const SessionProvider = ({ children }) => {
         isTyping,
         evaluation,
         isSessionComplete,
+        isInjectionTerminated,
         setLoading,
         setNumQuestions,
         setIsTyping,
         setEvaluation,
+        setIsInjectionTerminated,
         selectSubject,
         startSession,
         addMessage,

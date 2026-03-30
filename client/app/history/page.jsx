@@ -72,7 +72,7 @@ function SessionHistoryCard({ session, onClick }) {
           {/* Info */}
           <div className="flex-1 min-w-0">
             <h3
-              className="text-lg truncate mb-1"
+              className="text-lg truncate mb-1 capitalize"
               style={{
                 fontFamily: "var(--font-playfair)",
                 color: "var(--color-inkdeep)",
@@ -185,10 +185,11 @@ export default function HistoryPage() {
 
   const subjects = [
     "all",
-    "Mathematics",
-    "Science",
-    "History",
-    "Computer Science",
+    "machine learning",
+    "computer networks",
+    "data structures and algorithms",
+    "oop basics",
+    "artificial intelligence",
   ];
 
   useEffect(() => {

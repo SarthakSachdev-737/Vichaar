@@ -43,7 +43,7 @@ export default function EmptyState() {
         className="text-inkfaded text-xs mt-4 text-center"
         style={{ fontFamily: "var(--font-courier)" }}
       >
-        4 subjects available
+        5 subjects available
       </p>
     </div>
   );
