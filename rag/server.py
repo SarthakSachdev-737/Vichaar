@@ -1,4 +1,4 @@
-﻿import asyncio
+import asyncio
 import json
 import os
 import random
@@ -31,7 +31,7 @@ load_dotenv(os.path.join(BASE_DIR, ".env"))
 CHROMA_PATH = os.path.join(BASE_DIR, "chroma")
 EMBEDDING_MODEL = "models/gemini-embedding-001"
 EVALUATOR_MODEL = "gemini-flash-latest"
-FOLLOWUP_MODEL = "gemini-2.0-flash-lite"  # lighter model for follow-up generation
+FOLLOWUP_MODEL = "gemini-2.5-flash-lite"  # lighter model for follow-up generation
 EVALUATION_TIMEOUT_SECONDS = float(os.getenv("EVALUATION_TIMEOUT_SECONDS", "20"))
 FOLLOWUP_TIMEOUT_SECONDS = float(os.getenv("FOLLOWUP_TIMEOUT_SECONDS", "4"))
 ENABLE_LLM_FOLLOWUPS = os.getenv("ENABLE_LLM_FOLLOWUPS", "true").lower() not in {
@@ -305,8 +305,40 @@ def subject_key_from_source(source: Any) -> str | None:
     return None
 
 
-def parse_json_from_llm(text: str) -> dict[str, Any]:
-    stripped = text.strip().replace("```json", "").replace("```", "").strip()
+def coerce_llm_content_to_text(content: Any) -> str:
+    if isinstance(content, str):
+        return content
+    if isinstance(content, dict):
+        return json.dumps(content)
+    if isinstance(content, list):
+        parts: list[str] = []
+        for item in content:
+            if isinstance(item, str):
+                parts.append(item)
+                continue
+            if isinstance(item, dict):
+                text = item.get("text")
+                if isinstance(text, str):
+                    parts.append(text)
+                    continue
+                parts.append(json.dumps(item))
+                continue
+            parts.append(str(item))
+        return "\n".join(part for part in parts if part).strip()
+    return str(content)
+
+
+def parse_json_from_llm(content: Any) -> dict[str, Any]:
+    if isinstance(content, dict):
+        return content
+
+    stripped = (
+        coerce_llm_content_to_text(content)
+        .strip()
+        .replace("```json", "")
+        .replace("```", "")
+        .strip()
+    )
     try:
         return json.loads(stripped)
     except json.JSONDecodeError:
@@ -454,7 +486,7 @@ async def evaluate_answer_async(question: str, reference_answer: str, student_an
     try:
         llm_output = await asyncio.wait_for(
             state.model.ainvoke(prompt),
-            timeout=EVALUATION_TIMEOUT_SECONDS,
+            timeout=1000,
         )
     except asyncio.TimeoutError:
         return EvaluationResult(
@@ -470,8 +502,10 @@ async def evaluate_answer_async(question: str, reference_answer: str, student_an
         )
 
     try:
-        parsed = parse_json_from_llm(str(llm_output.content))
+        parsed = parse_json_from_llm(llm_output.content)
     except Exception:
+        raw_output = coerce_llm_content_to_text(llm_output.content)
+        print(f"Failed to parse evaluation JSON: {raw_output[:1000]}")
         return EvaluationResult(
             score=0,
             factuality=0,
@@ -523,7 +557,7 @@ async def generate_followup_async(
             state.followup_model.ainvoke(prompt),
             timeout=FOLLOWUP_TIMEOUT_SECONDS,
         )
-        parsed = parse_json_from_llm(str(output.content))
+        parsed = parse_json_from_llm(output.content)
     except Exception:
         return None
 
@@ -835,12 +869,14 @@ async def startup() -> None:
         model=EVALUATOR_MODEL,
         temperature=0,
         google_api_key=api_key,
+        response_mime_type="application/json",
     )
     # follow-up generation uses a lighter model (lower latency, acceptable quality)
     state.followup_model = ChatGoogleGenerativeAI(
         model=FOLLOWUP_MODEL,
         temperature=0.3,
         google_api_key=api_key,
+        response_mime_type="application/json",
     )
 
 
