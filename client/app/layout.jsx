@@ -26,9 +26,9 @@ export const metadata = {
   title: "Vichaar",
   description: "AI powered learning platform",
   icons: {
-    icon: "/vichaar3.png",
-    shortcut: "/vichaar3.png",
-    apple: "/vichaar3.png",
+    icon: "/Vichaar.png",
+    shortcut: "/Vichaar.png",
+    apple: "/Vichaar.png",
   },
 };
 

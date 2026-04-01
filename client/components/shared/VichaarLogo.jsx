@@ -1,6 +1,6 @@
 "use client";
 
-export default function VichaarLogo({ size = "md", dark = false }) {
+export default function VichaarLogo({ size = "md", dark = true }) {
   const sizes = {
     sm: { img: "w-7 h-7" },
     md: { img: "w-9 h-9" },
@@ -12,16 +12,16 @@ export default function VichaarLogo({ size = "md", dark = false }) {
   return (
     <div
       className={`${s.img} rounded-sm shrink-0 overflow-hidden relative`}
-      style={{
-        background: dark ? "var(--color-cream)" : "var(--color-inkdeep)",
-        border: `1.5px solid ${dark ? "var(--color-ruleline)" : "var(--color-inkbrown)"}`,
-        boxShadow: dark
-          ? "2px 2px 0px var(--color-ruleline)"
-          : "2px 2px 0px var(--color-inkbrown)",
-      }}
+      // style={{
+      //   background: dark ? "var(--color-cream)" : "var(--color-inkdeep)",
+      //   border: `1.5px solid ${dark ? "var(--color-ruleline)" : "var(--color-inkbrown)"}`,
+      //   boxShadow: dark
+      //     ? "2px 2px 0px var(--color-ruleline)"
+      //     : "2px 2px 0px var(--color-inkbrown)",
+      // }}
     >
       <img
-        src="/Vichaar3.png"
+        src="/Vichaar.png"
         alt="Vichaar"
         className="w-full h-full object-contain"
         onError={(e) => {
@@ -31,7 +31,7 @@ export default function VichaarLogo({ size = "md", dark = false }) {
           ).style.display = "flex";
         }}
       />
-      {/* Fallback वि — shown only if /Vichaar3.png is missing */}
+      {/* Fallback V — shown only if /Vichaar.png is missing */}
       <span
         className="fallback absolute inset-0 items-center justify-center"
         style={{
@@ -42,7 +42,7 @@ export default function VichaarLogo({ size = "md", dark = false }) {
           fontSize: "0.85em",
         }}
       >
-        वि
+        V
       </span>
     </div>
   );

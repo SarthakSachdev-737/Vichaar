@@ -237,7 +237,7 @@ export default function HistoryPage() {
           className="flex items-center justify-between mb-8 pb-5"
           style={{ borderBottom: "1px solid var(--color-ruleline)" }}
         >
-          <VichaarLogoName size="sm" />
+          <VichaarLogoName size="md" />
           <button
             onClick={() => router.push("/dashboard")}
             className="flex items-center gap-2 px-4 py-2 rounded-sm text-sm transition-all duration-150"

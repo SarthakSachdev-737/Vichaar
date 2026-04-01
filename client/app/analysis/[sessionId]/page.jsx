@@ -99,7 +99,7 @@ export default function AnalysisPage() {
           className="flex items-center justify-between mb-8 pb-5"
           style={{ borderBottom: "1px solid var(--color-ruleline)" }}
         >
-          <VichaarLogoName size="sm" />
+          <VichaarLogoName size="md" />
 
           {/* Top button — only shown when active session exists */}
           {hasActiveSession && (
@@ -214,13 +214,6 @@ export default function AnalysisPage() {
           className="flex items-center justify-between mt-8 pt-6"
           style={{ borderTop: "1px solid var(--color-ruleline)" }}
         >
-          <p
-            className="text-xs text-inkfaded"
-            style={{ fontFamily: "var(--font-courier)" }}
-          >
-            Session ID: {sessionId?.slice(-8)}
-          </p>
-
           {/* Start New Session — always at bottom */}
           <button
             onClick={handleStartNew}

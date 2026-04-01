@@ -18,10 +18,10 @@ export default function SessionCompleteCard() {
       {/* AI avatar */}
       <div
         className="w-7 h-7 rounded-sm shrink-0 flex items-center justify-center mt-1"
-        style={{
-          background: "var(--color-inkdeep)",
-          border: "1px solid var(--color-inkbrown)",
-        }}
+        // style={{
+        //   background: "var(--color-inkdeep)",
+        //   border: "1px solid var(--color-inkbrown)",
+        // }}
       >
         <span
           style={{
