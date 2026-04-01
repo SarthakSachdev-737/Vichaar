@@ -1,29 +1,29 @@
 "use client";
 
-export default function VichaarLogoName({ size = "md", dark = false }) {
+export default function VichaarLogoName({ size = "sm", dark = false }) {
   const sizes = {
-    sm: { img: "w-7 h-7", text: "text-xl", gap: "gap-2" },
-    md: { img: "w-9 h-9", text: "text-3xl", gap: "gap-2" },
-    lg: { img: "w-12 h-12", text: "text-5xl", gap: "gap-3" },
+    sm: { img: "w-7 h-7", text: "text-xl" },
+    md: { img: "w-9 h-9", text: "text-3xl" },
+    lg: { img: "w-12 h-12", text: "text-5xl" },
   };
 
   const s = sizes[size];
 
   return (
-    <div className={`flex items-center ${s.gap} select-none`}>
+    <div className={`flex items-center gap-1.5 select-none`}>
       {/* Logo image — put your logo file as /public/logo.png */}
       <div
         className={`${s.img} rounded-sm shrink-0 overflow-hidden relative`}
-        style={{
-          background: dark ? "var(--color-cream)" : "var(--color-inkdeep)",
-          border: `1.5px solid ${dark ? "var(--color-ruleline)" : "var(--color-inkbrown)"}`,
-          boxShadow: dark
-            ? "2px 2px 0px var(--color-ruleline)"
-            : "2px 2px 0px var(--color-inkbrown)",
-        }}
+        // style={{
+        //     background: dark ? "var(--color-cream)" : "var(--color-inkdeep)",
+        //     border: `1.5px solid ${dark ? "var(--color-ruleline)" : "var(--color-inkbrown)"}`,
+        //   boxShadow: dark
+        //     ? "2px 2px 0px var(--color-ruleline)"
+        //     : "2px 2px 0px var(--color-inkbrown)",
+        // }}
       >
         <img
-          src="/Vichaar3.png"
+          src="/Vichaar.png"
           alt="Vichaar"
           className="w-full h-full object-contain"
           onError={(e) => {
@@ -44,7 +44,7 @@ export default function VichaarLogoName({ size = "md", dark = false }) {
             fontSize: "0.85em",
           }}
         >
-          वि
+          V
         </span>
       </div>
 
