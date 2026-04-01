@@ -48,7 +48,7 @@ export default function ProgressBar({ progress, subject }) {
       >
         {/* Subject name */}
         <p
-          className="text-sm flex-shrink-0"
+          className="text-sm flex-shrink-0 capitalize"
           style={{
             fontFamily: "var(--font-lora)",
             color: "var(--color-inkbrown)",

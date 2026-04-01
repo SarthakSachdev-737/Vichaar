@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import VichaarLogoName from "@/components/shared/VichaarLogoName";
 import SubjectCard from "@/components/dashboard/SubjectCard";
 import LoadingSpinner from "@/components/shared/LoadingSpinner";
+import UserAvatar from "@/components/shared/UserAvatar";
 
 export default function Sidebar() {
   const { user, mongoUser, logout } = useAuth();
@@ -152,7 +153,7 @@ export default function Sidebar() {
                 >
                   <div className="flex justify-between items-center">
                     <p
-                      className="text-xs truncate"
+                      className="text-xs truncate capitalize"
                       style={{
                         fontFamily: "var(--font-lora)",
                         color: "var(--color-inkbrown)",
@@ -221,36 +222,31 @@ export default function Sidebar() {
         style={{ borderTop: "1px solid var(--color-ruleline)" }}
       >
         <div className="flex items-center gap-3">
-          {user?.image ? (
-            <img
-              src={user.image}
-              alt={user.name}
-              className="w-8 h-8 rounded-full shrink-0"
-              style={{ border: "1.5px solid var(--color-ruleline)" }}
-            />
-          ) : (
-            <div
-              className="w-8 h-8 rounded-full flex items-center justify-center shrink-0"
-              style={{
-                background: "var(--color-inkdeep)",
-                color: "var(--color-cream)",
-                fontFamily: "var(--font-playfair)",
-                fontSize: "0.85rem",
-              }}
-            >
-              {user?.name?.[0] ?? "?"}
-            </div>
-          )}
+          <UserAvatar
+            user={user}
+            imgClassName="w-8 h-8 rounded-full shrink-0"
+            imgStyle={{
+              border: "1.5px solid var(--color-ruleline)",
+              objectFit: "cover",
+            }}
+            fallbackClassName="w-8 h-8 rounded-full flex items-center justify-center shrink-0"
+            fallbackStyle={{
+              background: "var(--color-inkdeep)",
+              color: "var(--color-cream)",
+              fontFamily: "var(--font-playfair)",
+              fontSize: "0.85rem",
+            }}
+          />
 
           <div className="flex-1 min-w-0">
             <p
-              className="text-sm truncate"
+              className="text-sm truncate capitalize"
               style={{
                 fontFamily: "var(--font-lora)",
                 color: "var(--color-inkbrown)",
               }}
             >
-              {user?.name}
+              {user?.name?.toLowerCase()}
             </p>
             <p
               className="text-xs truncate"

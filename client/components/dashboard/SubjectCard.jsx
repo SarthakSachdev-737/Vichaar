@@ -43,7 +43,7 @@ export default function SubjectCard({
                 : "var(--color-inkbrown)",
             }}
           >
-            {subject.name}
+            {subject.label}
           </p>
           <p
             className="text-xs truncate mt-0.5"

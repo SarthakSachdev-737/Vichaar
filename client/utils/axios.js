@@ -57,4 +57,7 @@ export const sendChatMessage = (data) =>
 export const abandonStudySession = (sessionId) =>
   api.delete(`/api/studySession/${sessionId}/abandon`);
 
+export const terminateStudySession = (sessionId) =>
+  api.delete(`/api/studySession/${sessionId}/terminate`);
+
 export default api;

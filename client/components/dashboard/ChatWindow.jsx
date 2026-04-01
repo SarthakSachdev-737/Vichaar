@@ -6,16 +6,24 @@ import ChatInput from "@/components/dashboard/ChatInput";
 import ProgressBar from "@/components/dashboard/ProgressBar";
 import TypingIndicator from "@/components/dashboard/TypingIndicator";
 import SessionCompleteCard from "@/components/dashboard/SessionCompleteCard";
+import InjectionTerminatedCard from "@/components/dashboard/InjectionTerminatedCard";
 
 export default function ChatWindow() {
-  const { messages, progress, selectedSubject, isTyping, isSessionComplete } =
-    useStudySession();
+  const {
+    messages,
+    progress,
+    selectedSubject,
+    isTyping,
+    isSessionComplete,
+    isInjectionTerminated,
+  } = useStudySession();
+
   const bottomRef = useRef(null);
 
-  // Auto scroll to bottom on new messages, typing indicator or session complete
+  // Auto scroll to bottom on new messages, typing or state changes
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, isTyping, isSessionComplete]);
+  }, [messages, isTyping, isSessionComplete, isInjectionTerminated]);
 
   return (
     <div className="flex-1 flex flex-col h-screen overflow-hidden">
@@ -43,8 +51,13 @@ export default function ChatWindow() {
           {/* Typing indicator */}
           {isTyping && <TypingIndicator />}
 
-          {/* Session complete card — shown when done */}
-          {isSessionComplete && <SessionCompleteCard />}
+          {/* Injection terminated — takes priority, shown instead of complete card */}
+          {isInjectionTerminated && <InjectionTerminatedCard />}
+
+          {/* Session complete — only shown if NOT injection terminated */}
+          {isSessionComplete && !isInjectionTerminated && (
+            <SessionCompleteCard />
+          )}
 
           <div ref={bottomRef} />
         </div>

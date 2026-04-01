@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useStudySession } from "@/context/SessionContext";
-import { sendChatMessage } from "@/utils/axios";
+import { sendChatMessage, terminateStudySession } from "@/utils/axios";
 
 export default function ChatInput() {
   const [input, setInput] = useState("");
@@ -16,11 +16,21 @@ export default function ChatInput() {
     setIsTyping,
     completeSession,
     isSessionComplete,
+    isInjectionTerminated,
+    setIsInjectionTerminated,
   } = useStudySession();
 
+  const isDisabled = sending || isSessionComplete || isInjectionTerminated;
+
+  const getPlaceholder = () => {
+    if (isInjectionTerminated)
+      return "Session terminated due to injection attempt";
+    if (isSessionComplete) return "Session complete — view your analysis above";
+    return "Write your answer here... (Enter to send)";
+  };
+
   const handleSend = async () => {
-    if (!input.trim() || sending || !currentSession || isSessionComplete)
-      return;
+    if (!input.trim() || isDisabled || !currentSession) return;
 
     const userContent = input.trim();
     setInput("");
@@ -40,7 +50,6 @@ export default function ChatInput() {
 
       if (progress) updateProgress(progress);
 
-      // Hide typing indicator
       setIsTyping(false);
 
       if (done) {
@@ -52,13 +61,22 @@ export default function ChatInput() {
           _replace: true,
         });
 
-        // Store report in context
-        if (setEvaluation) setEvaluation(report);
-
-        // Mark session as complete — shows SessionCompleteCard
-        completeSession();
+        if (evaluation?.injection) {
+          // ── Injection detected ──
+          // Delete session from MongoDB silently
+          try {
+            await terminateStudySession(currentSession._id);
+          } catch (err) {
+            console.error("Failed to terminate session:", err);
+          }
+          setIsInjectionTerminated(true);
+        } else {
+          // ── Normal completion ──
+          if (setEvaluation) setEvaluation(report);
+          completeSession();
+        }
       } else {
-        // Attach evaluation to last user message
+        // Session ongoing
         addMessage({
           role: "user",
           content: userContent,
@@ -66,7 +84,6 @@ export default function ChatInput() {
           _replace: true,
         });
 
-        // Add next question as clean AI bubble
         addMessage({
           role: "ai",
           content: nextQuestion?.question ?? "",
@@ -106,50 +123,43 @@ export default function ChatInput() {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder={
-            isSessionComplete
-              ? "Session complete — view your analysis above"
-              : "Write your answer here... (Enter to send)"
-          }
+          placeholder={getPlaceholder()}
           rows={3}
-          disabled={sending || isSessionComplete}
+          disabled={isDisabled}
           className="flex-1 resize-none outline-none px-4 py-3 rounded-sm text-sm leading-relaxed"
           style={{
             fontFamily: "var(--font-lora)",
-            color: isSessionComplete
+            color: isDisabled
               ? "var(--color-inkfaded)"
               : "var(--color-inkdeep)",
-            border: "1px solid var(--color-ruleline)",
-            background: isSessionComplete
+            border: `1px solid ${isInjectionTerminated ? "rgba(192,57,43,0.3)" : "var(--color-ruleline)"}`,
+            background: isDisabled
               ? "rgba(212,201,176,0.2)"
               : "var(--color-warmwhite)",
             boxShadow: "inset 2px 2px 4px rgba(212,201,176,0.3)",
-            cursor: isSessionComplete ? "not-allowed" : "text",
+            cursor: isDisabled ? "not-allowed" : "text",
           }}
         />
 
         {/* Send button */}
         <button
           onClick={handleSend}
-          disabled={sending || !input.trim() || isSessionComplete}
+          disabled={isDisabled || !input.trim()}
           className="flex-shrink-0 w-12 h-12 rounded-sm flex items-center justify-center transition-all duration-150"
           style={{
             background:
-              sending || !input.trim() || isSessionComplete
+              isDisabled || !input.trim()
                 ? "var(--color-ruleline)"
                 : "var(--color-inkdeep)",
             border: "1px solid var(--color-inkbrown)",
             boxShadow:
-              sending || !input.trim() || isSessionComplete
+              isDisabled || !input.trim()
                 ? "none"
                 : "2px 2px 0px var(--color-inkbrown)",
-            cursor:
-              sending || !input.trim() || isSessionComplete
-                ? "not-allowed"
-                : "pointer",
+            cursor: isDisabled || !input.trim() ? "not-allowed" : "pointer",
           }}
           onMouseEnter={(e) => {
-            if (!sending && input.trim() && !isSessionComplete) {
+            if (!isDisabled && input.trim()) {
               e.currentTarget.style.transform = "translate(-1px, -1px)";
               e.currentTarget.style.boxShadow =
                 "3px 3px 0px var(--color-inkbrown)";
@@ -179,12 +189,19 @@ export default function ChatInput() {
       </div>
 
       <p
-        className="text-xs mt-2 text-inkfaded max-w-3xl mx-auto"
-        style={{ fontFamily: "var(--font-courier)" }}
+        className="text-xs mt-2 max-w-3xl mx-auto"
+        style={{
+          fontFamily: "var(--font-courier)",
+          color: isInjectionTerminated
+            ? "var(--color-scholarred)"
+            : "var(--color-inkfaded)",
+        }}
       >
-        {isSessionComplete
-          ? "Session ended — scroll up to review your answers"
-          : "Shift + Enter for new line · Enter to send"}
+        {isInjectionTerminated
+          ? "Session ended — prompt injection detected"
+          : isSessionComplete
+            ? "Session ended — scroll up to review your answers"
+            : "Shift + Enter for new line · Enter to send"}
       </p>
     </div>
   );

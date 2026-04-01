@@ -1,27 +1,32 @@
 const subjects = [
     {
         id: "1",
-        name: "Machine Learning",
+        name: "machine learning",
+        label: "Machine Learning",
         description: "Supervised, unsupervised, neural networks and more",
     },
     {
         id: "2",
-        name: "Computer Networks",
+        name: "computer networks",
+        label: "Computer Networks",
         description: "OSI model, protocols, TCP/IP and more",
     },
     {
         id: "3",
-        name: "Data Structures and Algorithms",
+        name: "data structures and algorithms",
+        label: "Data Structures and Algorithms",
         description: "Arrays, trees, sorting, complexity and more",
     },
     {
         id: "4",
-        name: "Object Oriented Programming Basics",
+        name: "object oriented programming basics",
+        label: "OOP Basics",
         description: "Classes, inheritance, polymorphism and more",
     },
     {
         id: "5",
-        name: "Artificial Intelligence",
+        name: "artificial intelligence",
+        label: "Artificial Intelligence",
         description: "Search, reasoning, planning and more",
     },
 ];

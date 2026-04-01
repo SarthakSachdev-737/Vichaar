@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import ReactMarkdown from "react-markdown";
 import VichaarLogo from "../shared/VichaarLogo";
+import UserAvatar from "../shared/UserAvatar";
 
 // ── Score pill + modal details ──────────────────────────────
 function EvaluationPill({ evaluation }) {
@@ -32,30 +33,65 @@ function EvaluationPill({ evaluation }) {
 
   return (
     <>
-      {/* Pill */}
-      <button
-        onClick={() => setIsOpen(true)}
-        className="flex items-center gap-1.5 px-3 py-1.5 rounded-sm cursor-pointer transition-all duration-200 hover:scale-[1.02]"
-        style={{
-          background: c.bg,
-          border: `1px solid ${c.border}`,
-          color: c.color,
-        }}
-        aria-label="View evaluation details"
-      >
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-        </svg>
-        <span
+      <div className="flex items-center gap-2">
+        {/* Info Icon Button */}
+        <button
+          onClick={() => setIsOpen(true)}
+          className="flex items-center justify-center rounded-full transition-all duration-200"
           style={{
-            fontFamily: "var(--font-courier)",
-            fontSize: "0.70rem",
-            fontWeight: "700",
+            width: "24px",
+            height: "24px",
+            background: "transparent",
+            color: "var(--color-inkfaded)",
+            cursor: "pointer",
+          }}
+          aria-label="View evaluation details"
+          onMouseEnter={(e) => {
+            e.currentTarget.style.color = "var(--color-inkdeep)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.color = "var(--color-inkfaded)";
           }}
         >
-          {evaluation.score}/10
-        </span>
-      </button>
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="16" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+          </svg>
+        </button>
+
+        {/* Score Pill */}
+        <div
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-sm"
+          style={{
+            background: c.bg,
+            border: `1px solid ${c.border}`,
+            color: c.color,
+          }}
+        >
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+          </svg>
+          <span
+            style={{
+              fontFamily: "var(--font-courier)",
+              fontSize: "0.70rem",
+              fontWeight: "700",
+            }}
+          >
+            {evaluation.score}/10
+          </span>
+        </div>
+      </div>
 
       {/* Fixed Modal Overlay */}
       {isOpen && (
@@ -314,38 +350,27 @@ export default function ChatMessage({ message }) {
       {/* User avatar */}
       {!isAi && (
         <div className="w-7 h-7 shrink-0 flex items-center justify-center mt-1">
-          {user?.avatar ? (
-            <img
-              src={user.avatar}
-              alt={user.name || "User"}
-              className="w-full h-full rounded-full object-cover"
-              style={{
-                boxShadow: "0 2px 4px rgba(26,20,16,0.15)",
-                border: "1px solid var(--color-ruleline)",
-              }}
-            />
-          ) : (
-            <div
-              className="w-full h-full rounded-full flex items-center justify-center"
-              style={{
-                background: "var(--color-inkdeep)",
-                color: "var(--color-cream)",
-                boxShadow: "0 2px 6px rgba(26,20,16,0.3)",
-                border: "1px solid var(--color-inkbrown)",
-              }}
-            >
-              <span
-                style={{
-                  fontFamily: "var(--font-playfair)",
-                  fontSize: "0.75rem",
-                  fontWeight: "bold",
-                  lineHeight: 1,
-                }}
-              >
-                {user?.name ? user.name.charAt(0).toUpperCase() : "U"}
-              </span>
-            </div>
-          )}
+          <UserAvatar
+            user={user}
+            imgClassName="w-full h-full rounded-full object-cover"
+            imgStyle={{
+              boxShadow: "0 2px 4px rgba(26,20,16,0.15)",
+              border: "1px solid var(--color-ruleline)",
+            }}
+            fallbackClassName="w-full h-full rounded-full flex items-center justify-center"
+            fallbackStyle={{
+              background: "var(--color-inkdeep)",
+              color: "var(--color-cream)",
+              boxShadow: "0 2px 6px rgba(26,20,16,0.3)",
+              border: "1px solid var(--color-inkbrown)",
+            }}
+            fallbackSpanStyle={{
+              fontFamily: "var(--font-playfair)",
+              fontSize: "0.75rem",
+              fontWeight: "bold",
+              lineHeight: 1,
+            }}
+          />
         </div>
       )}
     </div>
